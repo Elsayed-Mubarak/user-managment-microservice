@@ -1,0 +1,21 @@
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+cache:
+  paths:
+    - node_modules/
+
+before_script:
+ - apt-get update -qq && apt-get install -y -qq sshpass
+
+deploy_stage:
+  stage: deploy
+  environment: Staging
+  only:
+    - stage
+  script:
+    - rm ./package-lock.json
+    - npm install
+    - ls
+    - sshpass -V
+    - export SSHPASS=$USER_PASS 
+    - sshpass -e scp -o stricthostkeychecking=no -r . v-apps@stage.tooliserver.com:/opt/Tooli-Node/user-management
